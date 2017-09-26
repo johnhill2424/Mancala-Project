@@ -39,6 +39,7 @@ public class MancalaGUI extends JFrame{
             System.exit(0);
          }
       });
+
       
       //JPanels for the A and B row Buttons
       
@@ -52,18 +53,36 @@ public class MancalaGUI extends JFrame{
       //Initializing buttons
       jbList = new ArrayList<JButton>();
       
-      for(int i=0;i<6;i++){
-         jbutton = new JButton("A");
+ 
+//       jbutton = new JButton("5");
+//       jbutton.setIcon( new ImageIcon("marble.jpg") );
+//       
+//       jbutton.setVerticalTextPosition(SwingConstants.BOTTOM);
+//       jbutton.setHorizontalTextPosition(SwingConstants.CENTER);
+//       jpMain.add(jbutton);
+//       add(jpMain,BorderLayout.CENTER);
+      
+      
+      for(int i=0;i<12;i++){
+         jbutton = new JButton(""+i);
+         jbutton.setIcon( new ImageIcon("marble.jpg") );
+         jbutton.setName(""+i);
+         jbutton.setText("4");
+         jbutton.setVerticalTextPosition(SwingConstants.BOTTOM);
+         jbutton.setHorizontalTextPosition(SwingConstants.CENTER);
          jbList.add(jbutton);
          jpMain.add(jbutton,BorderLayout.CENTER);
+         jbList.get(i).addActionListener(new ActionListener(){
+         public void actionPerformed (ActionEvent ae){
+            String name = ((JButton)ae.getSource()).getName();
+            System.out.println(name);
+            
+         }// end of actionPerformed
+      });//end of addActionListener
+         
+         
+      }// end of for loop
       
-      }
-      for(int i=0;i<6;i++){
-         jbutton = new JButton("B");
-         jbList.add(jbutton);
-         jpMain.add(jbutton,BorderLayout.CENTER);
-      
-      }
       //Add Panels to JFrame
       add(jmb,BorderLayout.NORTH);
       add(mancA,BorderLayout.EAST);
@@ -76,9 +95,31 @@ public class MancalaGUI extends JFrame{
       setLocationRelativeTo(null);
       setDefaultCloseOperation(EXIT_ON_CLOSE);
       setVisible(true);
+      
+
+      
+   }//end of constructor 
+   
+   
+   //Get button text, turn into number, and reset
+   
+   String name; 
+   
+   public void takeTurn(String name_){
+   
+      //convert "name" to number 
+      name = name_; 
+     
+      String sNum = jbList.get(1).getText(); //get the string text from jbutton
+      System.out.println(sNum);
+      
+      int num = Integer.parseInt( sNum ); // make it a number
+      num++;
+      
+      String sString = String.format( "%d", num);
+      
+      jbList.get(1).setText(sString); 
    
    }
    
-
-
 }//end of MancalaGUI class
