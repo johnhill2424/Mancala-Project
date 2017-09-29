@@ -50,17 +50,11 @@ public class MancalaGUI extends JFrame{
       mancA = new JTextArea(15,20);
       mancB = new JTextArea(15,20);
       
+      mancA.setText("0");
+      mancB.setText("0");
+      
       //Initializing buttons
       jbList = new ArrayList<JButton>();
-      
- 
-//       jbutton = new JButton("5");
-//       jbutton.setIcon( new ImageIcon("marble.jpg") );
-//       
-//       jbutton.setVerticalTextPosition(SwingConstants.BOTTOM);
-//       jbutton.setHorizontalTextPosition(SwingConstants.CENTER);
-//       jpMain.add(jbutton);
-//       add(jpMain,BorderLayout.CENTER);
       
       
       for(int i=0;i<12;i++){
@@ -75,7 +69,7 @@ public class MancalaGUI extends JFrame{
          jbList.get(i).addActionListener(new ActionListener(){
          public void actionPerformed (ActionEvent ae){
             String name = ((JButton)ae.getSource()).getName();
-            System.out.println(name);
+            takeTurn(name); 
             
          }// end of actionPerformed
       });//end of addActionListener
@@ -103,23 +97,31 @@ public class MancalaGUI extends JFrame{
    
    //Get button text, turn into number, and reset
    
-   String name; 
    
-   public void takeTurn(String name_){
-   
-      //convert "name" to number 
-      name = name_; 
+   public void takeTurn(String name){
+      
+      int numName = Integer.parseInt(name); //convert the String "name" to number, get the button number that was clicked
+      
+      String sNum = jbList.get(numName).getText(); //get the current value of the button that was clicked
+      
+      int num = Integer.parseInt( sNum ); // make the current value of the button into a number
+      for (int i = 0; i <= num; i++){
+         String sNum_ = jbList.get(numName+i).getText(); //get the current value of the next button in line
+         int num_ = Integer.parseInt( sNum_ ); // make the current value of the button into a number
      
-      String sNum = jbList.get(1).getText(); //get the string text from jbutton
-      System.out.println(sNum);
+         String sString_ = String.format( "%d", num_+1); //add one to the current value
       
-      int num = Integer.parseInt( sNum ); // make it a number
-      num++;
+         jbList.get(numName+i).setText(sString_); //Update the button to hold the current value
       
-      String sString = String.format( "%d", num);
+      } // end of the loop
+     
+      jbList.get(numName).setText("0"); //Set the text of the button that was clicked to 0 
       
-      jbList.get(1).setText(sString); 
+   } // end of takeTurn method
    
-   }
+   
+   
+   
+   
    
 }//end of MancalaGUI class
