@@ -2,13 +2,14 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
+import java.io.*;
 
 public class MancalaGUITest extends JFrame implements ActionListener{
    
    private JButton jbutton;
    private JMenuBar jmb;
    private JMenu jm;
-   private JMenuItem jmiAbout,jmiRestart,jmiExit,jmiP2win,jmiP1win;
+   private JMenuItem jmiAbout,jmiRestart,jmiExit,jmiP2win,jmiP1win, jmiSave, jmiLoadGame;
    private Player1 p1;
    private Player2 p2;
    private boolean playerOneTurn = true; //if true, its player 1's turn, if false its player 2's turn
@@ -20,9 +21,10 @@ public class MancalaGUITest extends JFrame implements ActionListener{
    ArrayList<JButton> jbList = new ArrayList<JButton>();
    ArrayList<ImageIcon> imgList = new ArrayList<ImageIcon>();
    
+   
+   
    JLabel p1Score = new JLabel("0");
    JLabel p2Score = new JLabel("0");
-
 
    public static void main(String[] args){
       new MancalaGUITest();
@@ -94,7 +96,8 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       jmb = new JMenuBar();
       
       //JMenu
-      jm = new JMenu("Settings");
+      jm = new JMenu("File");
+      jm.setFont(new Font("Arial", Font.PLAIN, 20));
       jmb.add(jm);
       
       //JMenuItems
@@ -103,12 +106,17 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       jmiExit = new JMenuItem("Exit");
       jmiP1win = new JMenuItem("P1 Wins");
       jmiP2win = new JMenuItem("P2 Wins");
+      jmiSave = new JMenuItem("Save");
+      jmiLoadGame = new JMenuItem("Load Game");
+
       
       jm.add(jmiP1win);
       jm.add(jmiP2win);
       jm.add(jmiAbout);
       jm.add(jmiRestart);
       jm.add(jmiExit);
+      jm.add(jmiSave);
+      jm.add(jmiLoadGame);
       
       jmiP1win.addActionListener(new ActionListener(){
          public void actionPerformed(ActionEvent ae){
@@ -175,12 +183,39 @@ public class MancalaGUITest extends JFrame implements ActionListener{
          }
       });
       
+      
+      jmiSave.addActionListener(new ActionListener(){
+         public void actionPerformed(ActionEvent ae){
+            save();
+         }
+      });
+      
+      jmiLoadGame.addActionListener(new ActionListener(){
+         public void actionPerformed(ActionEvent ae){
+            load();
+         }
+      });
+      
       //add menubar to menupanel
       jmbPanel.add(jmb);
-      jmbPanel.add(new JLabel("Scores| Player 1: "));
+      
+      
+      p1Score.setFont(new Font("Arial", Font.PLAIN, 30));
+      p1Score.setForeground(Color.RED);
+      p2Score.setFont(new Font("Arial", Font.PLAIN, 30));
+      p2Score.setForeground(Color.BLUE);
+      
+      JLabel jlP1 = new JLabel("Scores| Player 1: ");
+      jlP1.setFont(new Font("Arial", Font.PLAIN, 30));
+      
+      JLabel jlP2 = new JLabel(" Player 2: ");
+      jlP2.setFont(new Font("Arial", Font.PLAIN, 30));
+      
+      jmbPanel.add(jlP1);
       jmbPanel.add(p1Score);
-      jmbPanel.add(new JLabel(" Player 2: "));
+      jmbPanel.add(jlP2);
       jmbPanel.add(p2Score);
+
       
       //add menupanel to main panel
       jpMain.add(jmbPanel,BorderLayout.NORTH);
@@ -244,6 +279,78 @@ public class MancalaGUITest extends JFrame implements ActionListener{
    
    }
    
+   public void save(){
+   
+      try{
+         File game1 = new File("game1.txt");
+         PrintWriter pw = new PrintWriter(game1);
+                        
+         for(int i=0; i<jbList.size(); i++){
+            String sNum = jbList.get(i).getText();
+            sNum = String.format("%s ",sNum);
+            pw.write(sNum); 
+         }//end of for loop 
+         
+         String wScores = String.format("%s %s ",p1Score.getText(),p2Score.getText());
+         
+         pw.write(wScores);
+         
+         if (playerOneTurn == true){
+            pw.write("true");
+         }
+         else if(playerOneTurn == false){
+            pw.write("false");
+         }
+         
+         pw.close();
+      
+      } // end of try 
+      
+      catch (IOException io){
+      
+      } // end of catch 
+
+   
+   } //end of save method 
+   
+   
+   public void load(){
+   
+      try{
+         BufferedReader br = new BufferedReader(new FileReader("game1.txt"));
+         String output = br.readLine();
+         
+         String[] split = output.split(" ");
+         for (int i = 0; i < jbList.size(); i++){
+            jbList.get(i).setText(split[i]);
+         }
+         
+         p1Score.setText(split[14]);
+         p2Score.setText(split[15]);
+         
+         marbleAmount();
+         
+         if(split[16].equals("false")){
+            playerOneTurn = false;
+            p2.enable();
+         
+         }
+         else if(split[16].equals("true")){
+            playerOneTurn = true;
+            p1.enable();
+         }
+         
+         br.close();
+      
+      } // end of try 
+      
+      catch (IOException io){
+      
+      } // end of catch 
+
+   
+   } //end of load method 
+   
    public void marbleAmount(){//Method takes the current amount of marbles in pocket, and matches corresponding picture
       
       for(int i=0; i<jbList.size(); i++){
@@ -252,7 +359,7 @@ public class MancalaGUITest extends JFrame implements ActionListener{
          
          
          if(num > 15){
-            System.out.println("Num = "+num);
+            //System.out.println("Num = "+num);
             jbList.get(i).setIcon(imgList.get(10));
             jbList.get(i).setVerticalTextPosition(SwingConstants.BOTTOM);
             jbList.get(i).setHorizontalTextPosition(SwingConstants.CENTER);
@@ -277,12 +384,12 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       
    
       int clickedName = Integer.parseInt(name); //convert the String name to number, get the button number that was clicked
-      System.out.println(clickedName);
+      //System.out.println(clickedName);
       int clickedNameStored = clickedName;
       
       String sCurrentValue = jbList.get(clickedName).getText(); //get the current value of the button that was clicked
       int currentValue = Integer.parseInt( sCurrentValue); // make the current value of the button into a number
-      System.out.println(currentValue);
+      //System.out.println(currentValue);
 
       //Each individual turn, adds one to subsequent holes, from 0 to number of marbles in the current hole
       for (int i = 1; i <= currentValue; i++){
@@ -291,7 +398,7 @@ public class MancalaGUITest extends JFrame implements ActionListener{
             clickedName = 0;
             currentValue = currentValue - i;
             i = 0;
-         }
+         }  
          
          String sNextButtonValue = jbList.get(clickedName+i).getText(); //get the current value of the next button in line
          int nextButtonValue = Integer.parseInt( sNextButtonValue ); // make the current value of the button into a number
@@ -303,18 +410,31 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       
       jbList.get(clickedNameStored).setText("0"); //Set the text of the button that was clicked to 0 
       
+       
+      //clickedName + currentValue represents the last marble of a turn
+      if (playerOneTurn == true){
+         if (jbList.get(clickedName + currentValue).getText().equals("1")){
+            p1.across(clickedName,currentValue);
+         }
+      }
+      
+      if (playerOneTurn == false){
+         if (jbList.get(clickedName + currentValue).getText().equals("1")){
+            p2.across(clickedName,currentValue);
+         }
+      }
+      
+
       
       // Should the player go again??
       //Player 1 landed on MancA
       if (clickedName + currentValue == 6){
-         System.out.println("On mancA");
          p1.enable();
          playerOneTurn = true;
       }
       
       //Player 2 landed on mancB
       else if (clickedName + currentValue == 13){
-         System.out.println("On mancB");
          p2.enable();
          playerOneTurn = false;
       }
@@ -422,6 +542,90 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       
       }//end of enable method   
       
+      public void across(int clickedName, int currentValue){
+         
+         int index = clickedName + currentValue;
+         String sCurVal = jbList.get(6).getText();
+         int curVal = Integer.parseInt( sCurVal); // make the current value of the button into a number
+         String sVal;
+         int curVal_;
+
+
+         switch(index){
+            case 0:
+               sVal = jbList.get(12).getText();
+               curVal_ = Integer.parseInt( sVal);
+               if (curVal_ == 0){
+                  break;
+               }
+               curVal_ = curVal + 1 + curVal_;
+               jbList.get(6).setText(""+curVal_);
+               jbList.get(index).setText("0");
+               jbList.get(12).setText("0");
+               break;          
+            case 1:
+               sVal = jbList.get(11).getText();
+               curVal_ = Integer.parseInt( sVal);
+               if (curVal_ == 0){
+                  break;
+               }
+               curVal_ = curVal + 1 + curVal_;
+               jbList.get(6).setText(""+curVal_);
+               jbList.get(index).setText("0");
+               jbList.get(11).setText("0");
+               break;
+            case 2:
+               sVal = jbList.get(10).getText();
+               curVal_ = Integer.parseInt( sVal);
+               if (curVal_ == 0){
+                  break;
+               }
+               curVal_ = curVal + 1 + curVal_;
+               jbList.get(6).setText(""+curVal_);
+               jbList.get(index).setText("0");
+               jbList.get(10).setText("0");
+               break; 
+            case 3:
+               sVal = jbList.get(9).getText();
+               curVal_ = Integer.parseInt( sVal);
+               if (curVal_ == 0){
+                  break;
+               }
+               curVal_ = curVal + 1 + curVal_;
+               jbList.get(6).setText(""+curVal_);
+               jbList.get(index).setText("0");
+               jbList.get(9).setText("0");
+               break;
+            case 4:
+               sVal = jbList.get(8).getText();
+               curVal_ = Integer.parseInt( sVal);
+               if (curVal_ == 0){
+                  break;
+               }
+               curVal_ = curVal + 1 + curVal_;
+               jbList.get(6).setText(""+curVal_);
+               jbList.get(index).setText("0");
+               jbList.get(8).setText("0");
+               break;
+            case 5:
+               sVal = jbList.get(7).getText();
+               curVal_ = Integer.parseInt( sVal);
+               if (curVal_ == 0){
+                  break;
+               }
+               curVal_ = curVal + 1 + curVal_;
+               jbList.get(6).setText(""+curVal_);
+               jbList.get(index).setText("0");
+               jbList.get(7).setText("0");
+               break;         
+            default:
+               break;
+         
+         }
+      
+      
+      } // end of across method 
+      
    } //end of Player1 class 
    
   
@@ -457,6 +661,93 @@ public class MancalaGUITest extends JFrame implements ActionListener{
          }
       
       } //end of disable2 method 
+      
+      
+      
+      public void across(int clickedName, int currentValue){
+         
+         int index = clickedName + currentValue;
+         String sCurVal = jbList.get(13).getText();
+         int curVal = Integer.parseInt( sCurVal); // make the current value of the button into a number
+         String sVal;
+         int curVal_;
+
+
+         switch(index){
+            case 7:
+               sVal = jbList.get(5).getText();
+               curVal_ = Integer.parseInt( sVal);
+               if (curVal_ == 0){
+                  break;
+               }
+               curVal_ = curVal + 1 + curVal_;
+               jbList.get(13).setText(""+curVal_);
+               jbList.get(index).setText("0");
+               jbList.get(5).setText("0");
+
+               break;          
+            case 8:
+               sVal = jbList.get(4).getText();
+               curVal_ = Integer.parseInt( sVal);
+               if (curVal_ == 0){
+                  break;
+               }
+               curVal_ = curVal + 1 + curVal_;
+               jbList.get(13).setText(""+curVal_);
+               jbList.get(index).setText("0");
+               jbList.get(4).setText("0");
+               break;
+            case 9:
+               sVal = jbList.get(3).getText();
+               curVal_ = Integer.parseInt( sVal);
+               if (curVal_ == 0){
+                  break;
+               }
+               curVal_ = curVal + 1 + curVal_;
+               jbList.get(13).setText(""+curVal_);
+               jbList.get(index).setText("0");
+               jbList.get(3).setText("0");
+               break; 
+            case 10:
+               sVal = jbList.get(2).getText();
+               curVal_ = Integer.parseInt( sVal);
+               if (curVal_ == 0){
+                  break;
+               }
+               curVal_ = curVal + 1 + curVal_;
+               jbList.get(13).setText(""+curVal_);
+               jbList.get(index).setText("0");
+               jbList.get(2).setText("0");
+               break;
+            case 11:
+               sVal = jbList.get(1).getText();
+               curVal_ = Integer.parseInt( sVal);
+               if (curVal_ == 0){
+                  break;
+               }
+               curVal_ = curVal + 1 + curVal_;
+               jbList.get(13).setText(""+curVal_);
+               jbList.get(index).setText("0");
+               jbList.get(1).setText("0");
+               break;
+            case 12:
+               sVal = jbList.get(0).getText();
+               curVal_ = Integer.parseInt( sVal);
+               if (curVal_ == 0){
+                  break;
+               }
+               curVal_ = curVal + 1 + curVal_;
+               jbList.get(13).setText(""+curVal_);
+               jbList.get(index).setText("0");
+               jbList.get(0).setText("0");
+               break;         
+            default:
+               break;
+         
+         }
+      
+      
+      } // end of across method 
    
    } //End of player2 class 
       
