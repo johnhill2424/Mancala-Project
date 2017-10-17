@@ -4,36 +4,61 @@ import javax.swing.*;
 import java.util.*;
 import java.io.*;
 
-public class MancalaGUITest extends JFrame implements ActionListener{
+/** 
+
+* MancalaGame recreates the classic board game, Mancala, and is easy to use and beautiful to look at. It is 
+* a fantastic piece of software, packaged up nicely with America's favorite language, Java, along with 
+* the trustworthy IDE, JGrasp. 
+*  
+* @author John Hill and Jack Old 
+* @version 1.0 
+* @since 2017-10-16
+
+*/
+
+public class MancalaGame extends JFrame implements ActionListener{
    
    private JButton jbutton;
    private JMenuBar jmb;
    private JMenu jm;
-   private JMenuItem jmiAbout,jmiRestart,jmiExit,jmiP2win,jmiP1win, jmiSave, jmiLoadGame;
+   private JMenuItem jmiAbout,jmiRestart,jmiExit,jmiSave, jmiLoadGame;
    private Player1 p1;
    private Player2 p2;
    private boolean playerOneTurn = true; //if true, its player 1's turn, if false its player 2's turn
    private boolean endOfGame = false; 
-   private boolean onMancA;
-   private boolean onMancB;
    
+   private ArrayList<JButton> jbList = new ArrayList<JButton>();
+   private ArrayList<ImageIcon> imgList = new ArrayList<ImageIcon>();
    
-   ArrayList<JButton> jbList = new ArrayList<JButton>();
-   ArrayList<ImageIcon> imgList = new ArrayList<ImageIcon>();
+   private JLabel p1Score = new JLabel("0");
+   private JLabel p2Score = new JLabel("0");
+
+   /** 
    
-   
-   
-   JLabel p1Score = new JLabel("0");
-   JLabel p2Score = new JLabel("0");
+   * Main class, creates a MancalaGame object 
+   *   
+   * @param args Arguments  
+   * 
+   */
 
    public static void main(String[] args){
-      new MancalaGUITest();
+      new MancalaGame();
    }
 
-   public MancalaGUITest(){
+   /** 
+   *
+   * Constructor for MancalaGame class
+   * Creates the GUI using JFrame, JPanels, JMenus, and JButtons 
+   * Adds actionlisteners for all the buttons and menu items 
+   *
+   */
 
-      
+   public MancalaGame(){
+
+
+      //Creates the buttons and initializes them to their values
       for(int i = 0; i <= 13; i++){
+         //This part creates the Mancala's on the sides 
          if(i == 6 || i == 13){
             JButton jbutton = new JButton("0");
             jbutton.setFont(new Font("Arial", Font.PLAIN, 40));
@@ -41,6 +66,7 @@ public class MancalaGUITest extends JFrame implements ActionListener{
             jbutton.setName(""+i);
             jbList.add(jbutton);
          }
+         //This part creates all the other pits 
          else{
             JButton jbutton = new JButton("4");
             jbutton.setFont(new Font("Arial", Font.PLAIN, 40));
@@ -48,48 +74,48 @@ public class MancalaGUITest extends JFrame implements ActionListener{
             jbList.add(jbutton);
          }
          
-      }
+      } //End of for loop 
 
-    
+      //Adds the images to the imgList arraylist
       for(int i = 0; i <= 10; i++){
          try {
             ImageIcon img = new ImageIcon("manc_marbles/marble"+i+".png");
-            imgList.add(img);
-            
+            imgList.add(img); 
          }
          catch(Exception e){
             System.out.println(e);
          }
       }
      
+      //the marbleAmount method updates the images to match the values in the buttons 
       marbleAmount();
  
-
+      //creates a panel for the top row of buttons 
 		JPanel topRow = new JPanel();
 		for(int i=12; i>=7; i--){ 
          topRow.add(jbList.get(i));
       }
 		
+      //creates a panel for the bottom row of buttons 
 		JPanel bottomRow = new JPanel();
 		for(int i=0; i<=5; i++){
          bottomRow.add(jbList.get(i));
       }
 
+      //creates a panel to hold both the top and bottom rows 
 		JPanel bothRows = new JPanel();
 		bothRows.setLayout( new GridLayout(2, 1) );
 		bothRows.add(topRow);
 		bothRows.add(bottomRow);
 
-		// Combine the two lines with the mancalas on both sides
-		JPanel jpMain = new JPanel();	// Create another container
+		//creates a paenl to combine both rows with the mancalas on both sides 
+		JPanel jpMain = new JPanel();	
       jpMain.setLayout(new BorderLayout());
       jpMain.add(bothRows, BorderLayout.CENTER);
       jpMain.add(jbList.get(13), BorderLayout.WEST);
       jpMain.add(jbList.get(6), BorderLayout.EAST);
       
-      //JPanel superJP = new JPanel();
-      //superJP.add(jpMain, BorderLayout.CENTER);
-      
+      //makes the panel to hold the menubar and makes it float to the left 
       JPanel jmbPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
       
       //MenuBar
@@ -104,70 +130,22 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       jmiAbout = new JMenuItem("About");
       jmiRestart = new JMenuItem("Restart");
       jmiExit = new JMenuItem("Exit");
-      jmiP1win = new JMenuItem("P1 Wins");
-      jmiP2win = new JMenuItem("P2 Wins");
       jmiSave = new JMenuItem("Save");
       jmiLoadGame = new JMenuItem("Load Game");
+      jmiAbout = new JMenuItem("About");
 
-      
-      jm.add(jmiP1win);
-      jm.add(jmiP2win);
+      //Add JMenuItems to the JMenu
       jm.add(jmiAbout);
       jm.add(jmiRestart);
       jm.add(jmiExit);
       jm.add(jmiSave);
       jm.add(jmiLoadGame);
+      jm.add(jmiAbout);
       
-      jmiP1win.addActionListener(new ActionListener(){
-         public void actionPerformed(ActionEvent ae){
-            
-            jbList.get(0).setText("0");
-            jbList.get(1).setText("0");
-            jbList.get(2).setText("0");
-            jbList.get(3).setText("2");
-            jbList.get(4).setText("0");
-            jbList.get(5).setText("0");
-            jbList.get(6).setText("40");
-            jbList.get(7).setText("3");
-            jbList.get(8).setText("0");
-            jbList.get(9).setText("0");
-            jbList.get(10).setText("2");
-            jbList.get(11).setText("0");
-            jbList.get(12).setText("1");
-            jbList.get(13).setText("0");
-            
-            marbleAmount();
-            playerOneTurn = true;
-            endOfGame = false;
-            
-         }
-      });
+      //add menubar to menupanel
+      jmbPanel.add(jmb);
       
-      jmiP2win.addActionListener(new ActionListener(){
-         public void actionPerformed(ActionEvent ae){
-            
-            jbList.get(0).setText("3");
-            jbList.get(1).setText("0");
-            jbList.get(2).setText("0");
-            jbList.get(3).setText("2");
-            jbList.get(4).setText("0");
-            jbList.get(5).setText("1");
-            jbList.get(6).setText("0");
-            jbList.get(7).setText("0");
-            jbList.get(8).setText("0");
-            jbList.get(9).setText("0");
-            jbList.get(10).setText("2");
-            jbList.get(11).setText("0");
-            jbList.get(12).setText("0");
-            jbList.get(13).setText("40");
-            
-            marbleAmount();
-            playerOneTurn = true;
-            endOfGame = false;
-            
-         }
-      });
-      
+      //Creates actionListener for restart menu item and calls resetGame method 
       jmiRestart.addActionListener(new ActionListener(){
          public void actionPerformed(ActionEvent ae){
             resetGame();
@@ -177,6 +155,7 @@ public class MancalaGUITest extends JFrame implements ActionListener{
          }
       });
       
+      //Creates actionListener for exit menu item
       jmiExit.addActionListener(new ActionListener(){
          public void actionPerformed(ActionEvent ae){
             System.exit(0);
@@ -184,22 +163,60 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       });
       
       
+      //Creates actionListener for exit menu item
+      jmiAbout.addActionListener(new ActionListener(){
+         public void actionPerformed(ActionEvent ae){
+            String aboutPage = String.format("Welcome! If you clicked on this about page, chances are %n"+
+                                             "looking to understand how to play the game, Mancala.%n"+
+
+                                             "It's very simple. The entire goal of the game is to%n"+
+                                             "get more marbles into your mancala (the side pit).%n"+
+                                             "This is done by clicking on the marbles on your side%n"+
+                                             "of the board. The marbles move in a counter-clockwise%n"+
+                                             "fashion, and drop a marble in each pit it crosses%n"+
+                                             "(this also includes your mancala).%n%n"+
+                                             
+                                             "There are some rules that also allow you to get%n"+
+                                             "more marbles into your mancala.%n%n"+
+                                             
+                                             "1. If the last marble placed down lands into an%n"+
+                                             "empty pit on your side, and the pit across%n"+
+                                             "from it has marbles in it, all of the marbles on%n"+
+                                             "their side and your marble on your side go into your%n"+
+                                             "mancala.%n%n"+
+                                             
+                                             "2. If the last marble placed down lands in your manacla,%n"+
+                                             "you get to go again,%n%n"+
+                                             
+                                             "Ending of game,%n"+
+                                             "-The game ends when all six spaces on one side of the Mancala,%n"+
+                                             "board are empty,%n"+
+                                             "-The player who still has pieces on his side of the board when %n"+
+                                             "the game ends captures all of those pieces,%n"+
+                                             "-Count all the pieces in each store, the winner is the,%n"+
+                                             "player with the most pieces,%n"
+                                             );
+         
+            JOptionPane.showMessageDialog(null, aboutPage);
+         }
+      });
+      
+      //Creates actionListener for save menu item and calls the save method 
       jmiSave.addActionListener(new ActionListener(){
          public void actionPerformed(ActionEvent ae){
             save();
          }
       });
       
+      //Creates actionListener for load menu item and calls the load method 
       jmiLoadGame.addActionListener(new ActionListener(){
          public void actionPerformed(ActionEvent ae){
             load();
          }
       });
       
-      //add menubar to menupanel
-      jmbPanel.add(jmb);
-      
-      
+
+      //Changes the font and color of p1Score and p2Score JLabel and initializes them
       p1Score.setFont(new Font("Arial", Font.PLAIN, 30));
       p1Score.setForeground(Color.RED);
       p2Score.setFont(new Font("Arial", Font.PLAIN, 30));
@@ -211,26 +228,24 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       JLabel jlP2 = new JLabel(" Player 2: ");
       jlP2.setFont(new Font("Arial", Font.PLAIN, 30));
       
+      //adds labels to the menubar panel 
       jmbPanel.add(jlP1);
       jmbPanel.add(p1Score);
       jmbPanel.add(jlP2);
       jmbPanel.add(p2Score);
 
-      
       //add menupanel to main panel
       jpMain.add(jmbPanel,BorderLayout.NORTH);
 
       //add to frame
       add(jpMain);
-      //add(jmbPanel, BorderLayout.WEST);
    
-      //Add actionListeners to all buttons
+      //Add actionListeners for all all buttons
       for(int i=0;i<14;i++){      
          jbList.get(i).addActionListener(this);
       }
    
-   
-      //disable player 2's buttons
+      //Disable player 2's buttons to star, player1 will start 
       for(int i=7; i<=12;i++){
          jbList.get(i).setEnabled(false);
       }
@@ -241,11 +256,17 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       setDefaultCloseOperation(EXIT_ON_CLOSE);
       setVisible(true);
       
+      //creates and initializes player1 and player2 objects 
       initializePlayers();
       
-     
    }//end of constructor 
    
+   
+   /** 
+   * Gets the name of the button that was clicked and passes it to the takeTurn method
+   * marbleAmount() assigns the images to the buttons 
+   * @param ae ActionEvent
+   */
    
    public void actionPerformed(ActionEvent ae){
       String name = ((JButton)ae.getSource()).getName();
@@ -253,10 +274,21 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       marbleAmount();
    }
    
+   
+   /** 
+   * Creates player1 and player2 objects 
+   */
+   
    public void initializePlayers(){
       p1 = new Player1();
       p2 = new Player2();
    }
+   
+   
+   /** 
+   * Resets the game back to start conditions, sets all the pits to 4,
+   * and all the mancalas to 0 
+   */
    
    public void resetGame(){
       
@@ -275,14 +307,17 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       marbleAmount();
       playerOneTurn = true;
       endOfGame = false;
-      
-   
+
    }
+   
+   /** 
+   * Creates a file that saves the current game conditions 
+   */
    
    public void save(){
    
       try{
-         File game1 = new File("game1.txt");
+         File game1 = new File("savedGame.txt");
          PrintWriter pw = new PrintWriter(game1);
                         
          for(int i=0; i<jbList.size(); i++){
@@ -290,6 +325,7 @@ public class MancalaGUITest extends JFrame implements ActionListener{
             sNum = String.format("%s ",sNum);
             pw.write(sNum); 
          }//end of for loop 
+         
          
          String wScores = String.format("%s %s ",p1Score.getText(),p2Score.getText());
          
@@ -307,17 +343,21 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       } // end of try 
       
       catch (IOException io){
-      
+         io.printStackTrace();
       } // end of catch 
 
    
    } //end of save method 
    
    
+   /** 
+   * Loads in the saved file to resume play
+   */
+   
    public void load(){
    
       try{
-         BufferedReader br = new BufferedReader(new FileReader("game1.txt"));
+         BufferedReader br = new BufferedReader(new FileReader("savedGame.txt"));
          String output = br.readLine();
          
          String[] split = output.split(" ");
@@ -325,8 +365,8 @@ public class MancalaGUITest extends JFrame implements ActionListener{
             jbList.get(i).setText(split[i]);
          }
          
-         p1Score.setText(split[14]);
-         p2Score.setText(split[15]);
+         p1Score.setText(split[13]);
+         p2Score.setText(split[14]);
          
          marbleAmount();
          
@@ -345,21 +385,23 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       } // end of try 
       
       catch (IOException io){
-      
+         io.printStackTrace();
       } // end of catch 
 
-   
    } //end of load method 
    
-   public void marbleAmount(){//Method takes the current amount of marbles in pocket, and matches corresponding picture
+   
+   /** 
+   * marbleAmount() takes the current amount of marbles in pocket, and matches the corresponding picture
+   */
+   
+   public void marbleAmount(){
       
       for(int i=0; i<jbList.size(); i++){
          String sNum = jbList.get(i).getText();
          int num = Integer.parseInt(sNum);
          
-         
          if(num > 15){
-            //System.out.println("Num = "+num);
             jbList.get(i).setIcon(imgList.get(10));
             jbList.get(i).setVerticalTextPosition(SwingConstants.BOTTOM);
             jbList.get(i).setHorizontalTextPosition(SwingConstants.CENTER);
@@ -380,16 +422,25 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       
    }
 
+   /** 
+   * This is the main driving method for the program 
+   * First it makes the string name into an integer
+   * Then it gets the current value of the button that was clicked
+   * Then it goes through a for loop to add the marbles to the pits and mancalas
+   * Then it checks to see if the last marble landed in an empty pit 
+   * Then it checks to see if the last marble landed in the players own Mancala, and if so the player goes again
+   *   
+   * @param name Name of the button that was clicked 
+   * 
+   */
+
    public void takeTurn(String name){
       
-   
       int clickedName = Integer.parseInt(name); //convert the String name to number, get the button number that was clicked
-      //System.out.println(clickedName);
       int clickedNameStored = clickedName;
       
       String sCurrentValue = jbList.get(clickedName).getText(); //get the current value of the button that was clicked
       int currentValue = Integer.parseInt( sCurrentValue); // make the current value of the button into a number
-      //System.out.println(currentValue);
 
       //Each individual turn, adds one to subsequent holes, from 0 to number of marbles in the current hole
       for (int i = 1; i <= currentValue; i++){
@@ -410,8 +461,8 @@ public class MancalaGUITest extends JFrame implements ActionListener{
       
       jbList.get(clickedNameStored).setText("0"); //Set the text of the button that was clicked to 0 
       
-       
       //clickedName + currentValue represents the last marble of a turn
+      //This part checks to see if a marble lands on an empty pit, if so it calls the across method 
       if (playerOneTurn == true){
          if (jbList.get(clickedName + currentValue).getText().equals("1")){
             p1.across(clickedName,currentValue);
@@ -423,10 +474,10 @@ public class MancalaGUITest extends JFrame implements ActionListener{
             p2.across(clickedName,currentValue);
          }
       }
+ 
+      // This part decides whether or not the last marble landed in the players Mancala
+      // If, so the player should go again
       
-
-      
-      // Should the player go again??
       //Player 1 landed on MancA
       if (clickedName + currentValue == 6){
          p1.enable();
@@ -439,13 +490,13 @@ public class MancalaGUITest extends JFrame implements ActionListener{
          playerOneTurn = false;
       }
       
-      //player1's turn 
+      //Player 1 goes again 
       else if (playerOneTurn == true){
          p2.enable();
          playerOneTurn = false; 
       }
       
-      //player2's turn
+      //Player 2 goes again
       else if (playerOneTurn == false){
          p1.enable();
          playerOneTurn = true;
@@ -455,35 +506,45 @@ public class MancalaGUITest extends JFrame implements ActionListener{
    } // end of takeTurn method
 
 
-   //Need to put all marbles left on the board into their respective columns 
+   /** 
+   * The end of game conditions have been met, 
+   * need to put all marbles left on the board into their respective Mancalas
+   */
+  
    public void gameOver(){
       int finalSum1 = 0;
       int finalSum2 = 0;
 
-      //count player A's mancalas
+      //Counts player A's pits
       for (int i = 0; i < 6; i++){
          finalSum1 +=  Integer.parseInt(jbList.get(i).getText()); //get the current value of the button that was clicked
       } 
       
       String sCurVal1 = jbList.get(6).getText();
       int curVal1 = Integer.parseInt( sCurVal1); // make the current value of the button into a number
+      
+      //combines the current value of all the pits with the current value of the mancalas
       int combined1 = finalSum1 + curVal1;
 
       String sCombined1= String.format( "%d", combined1);
       jbList.get(6).setText(sCombined1);
       
-      
+      //Counts player B's pits
       for (int i = 7; i < 13; i++){
          finalSum2 +=  Integer.parseInt(jbList.get(i).getText()); //get the current value of the button that was clicked
       }
       
       String sCurVal2 = jbList.get(13).getText();
       int curVal2 = Integer.parseInt( sCurVal2); // make the current value of the button into a number
+      
+      //combines the current value of all the pits with the current value of the mancalas
       int combined2 = finalSum2 + curVal2;
 
       String sCombined2= String.format( "%d", combined2);
       jbList.get(13).setText(sCombined2);
       
+      // Checks to see which player ended with more marbles in their Mancala 
+      // Printed the corresponding message 
       if (combined1 > combined2){
          JOptionPane.showMessageDialog(null, "Player 1 wins");
          int num = Integer.parseInt(p1Score.getText());
@@ -500,23 +561,29 @@ public class MancalaGUITest extends JFrame implements ActionListener{
          System.out.println("Tie Game");
       }
       
+      //After the game is over, reset it back to the beginning 
       resetGame();
       
-   }   
+   } //End of gameOver method 
 
 
-  class Player1{//Inner class created for Player 1
+  /** 
+  * Inner class for player1 
+  */
+
+  class Player1{
   
-      
       public Player1(){
       
       }
       
-      //turn on player1 buttons
+      //Method that will enable player1's buttons and disable player2's buttons 
       public void enable(){
          
         int sum1 = 0;
         
+        //Enable player1's buttons unless the it doesn't have any marbles in it
+        //Also sums all of player1's pits
         for (int i = 0; i < 6; i++){
             sum1 +=  Integer.parseInt(jbList.get(i).getText()); 
             if (jbList.get(i).getText() == "0"){
@@ -527,21 +594,26 @@ public class MancalaGUITest extends JFrame implements ActionListener{
             }
          }   
  
-         //disable all of player2's buttons
+         //Disable all of player2's buttons
          for (int i = 7; i < 13; i++){
             jbList.get(i).setEnabled(false);
          } 
          
-         
+         //If player1 doesn't have any marbles in their pits, the game is over 
          if (sum1 == 0){
             gameOver();
          }
-         
-         
- 
       
       }//end of enable method   
       
+      
+     /** 
+     * Across method checks to see if the last marble lands in an empty pit on player 1's side
+     * If so, take the marbles from this and the opposite pit and put them in player 1's mancala 
+     * @param clickedName String name of the button that was clicked 
+     * @param currentValue Integer value of the button that was clicked
+     */
+
       public void across(int clickedName, int currentValue){
          
          int index = clickedName + currentValue;
@@ -549,7 +621,6 @@ public class MancalaGUITest extends JFrame implements ActionListener{
          int curVal = Integer.parseInt( sCurVal); // make the current value of the button into a number
          String sVal;
          int curVal_;
-
 
          switch(index){
             case 0:
@@ -620,32 +691,35 @@ public class MancalaGUITest extends JFrame implements ActionListener{
                break;         
             default:
                break;
-         
          }
-      
       
       } // end of across method 
       
    } //end of Player1 class 
    
   
+   /** 
+   * Inner class for player2
+   */
   
-   public class Player2{//Inner class created for Player 2
+   public class Player2{
       
       public Player2(){
       
       }
       
-      //enable player2's buttons 
+      //Method that will enable player2's buttons and disable player1's buttons 
       public void enable(){
       
          int sum2 = 0;
       
-         //disable all of player1's buttons
+         //Disable all of player1's buttons
          for (int i = 0; i < 6; i++){
             jbList.get(i).setEnabled(false);
          } 
          
+         //Enable player2's buttons unless the it doesn't have any marbles in it
+         //Also sums all of player2's pits
          for (int i = 7; i < 13; i++){
             sum2 +=  Integer.parseInt(jbList.get(i).getText());
             if (jbList.get(i).getText() == "0"){
@@ -656,13 +730,20 @@ public class MancalaGUITest extends JFrame implements ActionListener{
             }
          }
          
+         //If player2 doesn't have any marbles in their pits, the game is over
          if (sum2 == 0){
             gameOver();
          }
       
-      } //end of disable2 method 
+      } //end of enable method 
       
-      
+     
+     /** 
+     * Across method checks to see if the last marble lands in an empty pit on player 2's side
+     * If so, take the marbles from this and the opposite pit and put them in player 2's mancala 
+     * @param clickedName String name of the button that was clicked 
+     * @param currentValue Integer value of the button that was clicked
+     */
       
       public void across(int clickedName, int currentValue){
          
@@ -671,7 +752,6 @@ public class MancalaGUITest extends JFrame implements ActionListener{
          int curVal = Integer.parseInt( sCurVal); // make the current value of the button into a number
          String sVal;
          int curVal_;
-
 
          switch(index){
             case 7:
@@ -744,14 +824,10 @@ public class MancalaGUITest extends JFrame implements ActionListener{
             default:
                break;
          
-         }
-      
+         } // End of switch
       
       } // end of across method 
    
    } //End of player2 class 
       
-      
-
-
-}//end of MancalaGUI class
+}//end of MancalaGame class
